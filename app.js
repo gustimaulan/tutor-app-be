@@ -42,45 +42,11 @@ app.use('/api/', limiter);
 
 // CORS configuration
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        
-        const allowedOrigins = [
-            'http://localhost:5173',
-            /^https:\/\/.*\.ngrok-free\.app$/, // Allow any ngrok-free.app subdomain
-            /^https:\/\/.*\.ngrok\.io$/, // Allow any ngrok.io subdomain
-            /^https:\/\/.*\.sigmath\.net$/ // Allow any sigmath.net subdomain
-        ];
-        
-        // Add production domains
-        if (NODE_ENV === 'production') {
-            allowedOrigins.push(
-                /^https:\/\/.*\.vercel\.app$/, // Vercel deployments
-                /^https:\/\/.*\.netlify\.app$/, // Netlify deployments
-                /^https:\/\/.*\.railway\.app$/, // Railway deployments
-                /^https:\/\/.*\.render\.com$/, // Render deployments
-                /^https:\/\/.*\.herokuapp\.com$/ // Heroku deployments
-            );
-        }
-        
-        const isAllowed = allowedOrigins.some(allowed => {
-            if (typeof allowed === 'string') {
-                return origin === allowed;
-            }
-            if (allowed instanceof RegExp) {
-                return allowed.test(origin);
-            }
-            return false;
-        });
-        
-        if (isAllowed) {
-            callback(null, true);
-        } else {
-            console.warn(`CORS blocked request from: ${origin}`);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: [
+        'http://localhost:5173',
+        'https://tutor-app.sigmath.net',
+        'https://be.sigmath.net'
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
