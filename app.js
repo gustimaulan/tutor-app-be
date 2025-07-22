@@ -4,7 +4,9 @@ const session = require('express-session');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-require('dotenv').config({ path: '.env.local' });
+// Load environment variables based on NODE_ENV
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.local';
+require('dotenv').config({ path: envFile });
 
 // Import routes
 const authRoutes = require('./routes/auth');
