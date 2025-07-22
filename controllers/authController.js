@@ -10,7 +10,7 @@ const login = async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Get user from Supabase using admin client to bypass RLS
+    // Get user from Supabase
     const { data: user, error } = await supabaseAdmin
       .from('users')
       .select('*')
@@ -21,7 +21,7 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Check password
+    // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -34,8 +34,13 @@ const login = async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    // Store token in session
-    req.session.token = token;
+    // Set token as HTTP-only cookie for security
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
 
     // Return user data (without password) and token
     const { password: _, ...userWithoutPassword } = user;
@@ -52,10 +57,7 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    // Clear session
-    req.session.destroy();
-    
-    // Clear cookie if exists
+    // Clear cookie
     res.clearCookie('token');
     
     res.json({ message: 'Logged out successfully' });

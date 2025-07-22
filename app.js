@@ -1,9 +1,9 @@
 const express = require('express');
 const path = require('path');
-const session = require('express-session');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 // Load environment variables based on NODE_ENV
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.local';
 require('dotenv').config({ path: envFile });
@@ -87,20 +87,7 @@ app.use(cors({
 // Enable JSON parsing for request body
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Session middleware with production settings
-app.use(session({
-    secret: process.env.JWT_SECRET || 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { 
-        secure: NODE_ENV === 'production',
-        httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 1 month
-        sameSite: NODE_ENV === 'production' ? 'strict' : 'lax'
-    },
-    name: 'sessionId' // Change default session name for security
-}));
+app.use(cookieParser());
 
 // Create uploads directory if it doesn't exist (for temporary file processing)
 const fs = require('fs');

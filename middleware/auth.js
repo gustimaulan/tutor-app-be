@@ -4,7 +4,6 @@ const { supabaseAdmin } = require('../config/supabase');
 const requireAuth = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '') || 
-                  req.session?.token ||
                   req.cookies?.token;
 
     if (!token) {
@@ -36,7 +35,6 @@ const requireAuth = async (req, res, next) => {
 const optionalAuth = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '') || 
-                  req.session?.token ||
                   req.cookies?.token;
 
     if (token) {
