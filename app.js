@@ -97,8 +97,8 @@ app.get('/health', (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api', studentsRoutes);  // Move students routes before attendance routes
 app.use('/api', attendanceRoutes);
-app.use('/api', studentsRoutes);
 app.use('/api', uploadRoutes);
 
 // 404 handler

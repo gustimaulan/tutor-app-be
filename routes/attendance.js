@@ -3,7 +3,6 @@ const router = express.Router();
 const { requireAuth } = require('../middleware/auth');
 const {
     getTutors,
-    getStudents,
     getAttendanceRecords,
     submitAttendance,
     getRecordDetails,
@@ -14,7 +13,7 @@ const {
 
 // Public endpoints (no auth required)
 router.get('/tutors', getTutors);
-router.get('/students', getStudents);
+// Removed duplicate students route - use dedicated /api/students endpoint
 // Require authentication for attendance records
 // Change this line from:
 // router.get('/attendance', requireAuth, attendanceController.getAttendanceRecords);
